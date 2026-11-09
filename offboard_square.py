@@ -16,7 +16,7 @@ class OffboardSquare(Node):
                          history=HistoryPolicy.KEEP_LAST, depth=1)
         self.mode_pub = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos)
         self.setpoint_pub = self.create_publisher(TrajectorySetpoint, '/fmu/in/trajectory_setpoint', qos)
-        self.cmd_pub = self.create_publisher(VehicleCommand, '/fmu/in/vehicle_command', qos)
+        self.cmd_pub = self.create_publisher(VehicleCommand, '/fmu/in/vehicle_command_v1', qos)
         self.create_subscription(VehicleOdometry, '/fmu/out/vehicle_odometry', self.on_odom, qos_profile_sensor_data)
 
         self.position = None
@@ -58,10 +58,12 @@ class OffboardSquare(Node):
         self.setpoint_pub.publish(sp)
 
         # Stream setpoints for 1 s first, then switch to offboard and arm
-        if self.ticks == 10:
-            self.send_command(VehicleCommand.VEHICLE_CMD_DO_SET_MODE, 1.0, 6.0)
-            self.send_command(VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM, 1.0)
-            self.get_logger().info('Offboard + arm sent')
+        if 10 <= self.ticks <= 100:
+            if self.ticks % 10 == 0:
+                self.send_command(VehicleCommand.VEHICLE_CMD_DO_SET_MODE, 1.0, 6.0)
+            elif self.ticks % 10 == 5:
+                self.send_command(VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM, 1.0)
+                self.get_logger().info('Offboard + arm sent')
         self.ticks += 1
 
         if self.position is None or self.ticks < 10:
