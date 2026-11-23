@@ -6,7 +6,7 @@ A simulated quadcopter that will search a forest for a missing hiker using only 
 
 ![x500 orbiting a clearing in the procedurally generated forest world (Gazebo Harmonic, PX4 SITL)](docs/forest_flight.gif)
 
-*PX4 x500 in offboard mode orbiting a clearing in the forest world: 99 conifers, saplings, rocks and fallen logs on rolling terrain. Played at 2× speed.*
+*PX4 x500 in offboard mode orbiting a clearing in the forest world: 170 conifers, saplings, rocks and fallen logs on rolling terrain. Sped up about 2×.*
 
 ## Stack
 
@@ -57,6 +57,16 @@ cd ~/PX4-Autopilot && PX4_GZ_WORLD=forest make px4_sitl gz_x500
 # 4. Run a node (another terminal, after sourcing install/setup.bash)
 python3 forest_run.py
 ```
+
+### Forest world
+
+The photorealistic forest is generated with [Forest3D](https://github.com/unitsSpaceLab/Forest3D) from a terrain elevation model and [Poly Haven](https://polyhaven.com) CC0 assets (firs, pines, saplings, ferns, mossy rocks, stumps, logs), then made PX4-ready with [sim/forest3d_to_px4.py](sim/forest3d_to_px4.py). Launch it with:
+
+```bash
+sim/run_forest.sh   # starts the agent, Gazebo, then PX4 once the GUI has loaded
+```
+
+[sim/run_forest.sh](sim/run_forest.sh) starts Gazebo before PX4: with hundreds of detailed models, PX4's default launch spawns the drone before the GUI has finished loading, and the drone never appears in the GUI.
 
 ## Roadmap
 

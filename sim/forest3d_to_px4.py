@@ -8,7 +8,7 @@ else the way PX4 SITL expects:
   * PX4-style physics (4 ms step), sky, sun with shadows and spherical coordinates
   * the world shifted vertically so the terrain at the origin (the drone's spawn
     point) is at z = 0
-  * a clear spawn area around the origin with a flat landing pad (top at z = 0)
+  * a clear spawn area around the origin with a flat landing pad
   * model URIs prefixed with model://forest3d/, resolved through a symlink in
     PX4's models folder, so no extra environment variables are needed
   * ground truth: every placed object's name, model, pose and scale written to a
@@ -64,15 +64,17 @@ HEADER = '''<?xml version="1.0" encoding="UTF-8"?>
       <elevation>488</elevation>
     </spherical_coordinates>
 '''
-# Flat take-off/landing pad at the spawn point, top surface at z = 0. The x500's thin
-# leg boxes fall through triangle-mesh terrain, so the drone needs a primitive to stand on.
+# Flat take-off/landing pad at the spawn point, top surface at PAD_TOP so it clears the
+# sloping terrain. Spawn the drone on it with PX4_GZ_MODEL_POSE="0,0,PAD_TOP"
+# (sim/run_forest.sh does this).
+PAD_TOP = 0.15
 PAD = '''    <model name="landing_pad">
       <static>true</static>
-      <pose>0 0 -0.15 0 0 0</pose>
+      <pose>0 0 {z:.3f} 0 0 0</pose>
       <link name="link">
         <collision name="collision"><geometry><box><size>2.5 2.5 0.3</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.5 2.5 0.3</size></box></geometry>
-          <material><ambient>0.35 0.35 0.33 1</ambient><diffuse>0.45 0.45 0.42 1</diffuse>
+          <material><ambient>0.25 0.18 0.12 1</ambient><diffuse>0.38 0.28 0.18 1</diffuse>
             <specular>0.05 0.05 0.05 1</specular></material></visual>
       </link>
     </model>
@@ -168,7 +170,7 @@ def main():
             rows.append([name, category, rel.split('/')[-1], *(f'{v:.4f}' for v in pose), '1'])
 
     out = px4_worlds / f'{args.name}.sdf'
-    out.write_text(HEADER.format(name=args.name) + PAD + ''.join(body) + FOOTER)
+    out.write_text(HEADER.format(name=args.name) + PAD.format(z=PAD_TOP - 0.15) + ''.join(body) + FOOTER)
     gt = px4_worlds / f'{args.name}_objects.csv'
     with gt.open('w', newline='') as f:
         w = csv.writer(f)
