@@ -4,9 +4,9 @@ A simulated quadcopter that will search a forest for a missing hiker using only 
 
 **Status: work in progress.** The simulation stack and the first flight-control and path-planning nodes work. Camera-based perception is next.
 
-<!-- Screenshot: add docs/forest_run.png and uncomment
-![x500 flying through the forest world in Gazebo](docs/forest_run.png)
--->
+![x500 orbiting a clearing in the procedurally generated forest world (Gazebo Harmonic, PX4 SITL)](docs/forest_flight.gif)
+
+*PX4 x500 in offboard mode orbiting a clearing in the forest world: 99 conifers, saplings, rocks and fallen logs on rolling terrain. Played at 2× speed.*
 
 ## Stack
 
@@ -24,6 +24,7 @@ A simulated quadcopter that will search a forest for a missing hiker using only 
 | [offboard_square.py](offboard_square.py) | Arms the drone, switches to offboard mode and flies a 5 m square at 5 m altitude by streaming position setpoints, then lands. |
 | [agility_test.py](agility_test.py) | Measures the airframe's limits: takes off, sprints with velocity setpoints, brakes, flies a slalom, returns home and reports top speed and braking time. |
 | [forest_run.py](forest_run.py) | Flies home → through a forest → a goal past the tree line → home, as fast as is safe. Details below. |
+| [sim/forest3d_to_px4.py](sim/forest3d_to_px4.py) | Builds the PX4-ready forest world from a [Forest3D](https://github.com/unitsSpaceLab/Forest3D) layout: PX4 physics, sky and lighting, a cleared spawn area with a landing pad, and a ground-truth CSV of every tree and rock. |
 
 ### forest_run.py
 
